@@ -5,9 +5,12 @@ extends Node2D
 
 func _process(_delta) -> void:
 	var mouse_pos = get_global_mouse_position()
+	# frame count is a helpful variable to make sure it doesn't crash wehn first
+	# running due to mouse_positions_queue being empty.
+	# TODO: just init the array to Vector2.ZERO
 	frame_count += 1
 	
-	# sussy queue
+	# sussy queue.
 	mouse_positions_queue.append(mouse_pos)
 	if mouse_positions_queue.size() >= 100:
 		# sussy pop()
@@ -23,14 +26,15 @@ func _process(_delta) -> void:
 	var angle_average : Vector2
 	var distance_average : float
 	if frame_count > 2:
-		var a : Array = mouse_positions_queue
+		# added this variable to shorten the lines
+		var mpq : Array = mouse_positions_queue
 		for i in  mouse_positions_queue.size() - 2:
-			angle_average += a[a.size() - i - 1] - a[a.size() - i - 2]
+			angle_average += mpq[mpq.size() - i - 1] - mpq[mpq.size() - i - 2]
 		angle_average /=  mouse_positions_queue.size() - 2
 		
-		var d : Array = mouse_positions_queue
-		for i in  (int(mouse_positions_queue.size() / 10)) - 2:
-			distance_average += d[d.size() - i - 1].distance_to(d[d.size() - i - 2])
+		# takes the average of distance using 1/10th of the Queue's recorded points.
+		for i in (int(mouse_positions_queue.size() / 10)) - 2:
+			distance_average += mpq[mpq.size() - i - 1].distance_to(mpq[mpq.size() - i - 2])
 		distance_average /=  mouse_positions_queue.size() - 2
 		
 		$vector.target_position = angle_average
@@ -38,9 +42,12 @@ func _process(_delta) -> void:
 	
 	$"ui vector".target_position = $vector.target_position
 	
+	# take pythagorean's of vector components to get 
+	# its velocity in units (by default pixels) per frame.
 	var current_vel = pow($vector.target_position.x, 2) + pow($vector.target_position.y,2 )
 	current_vel = sqrt(current_vel)
 	$"ui/bar".value = current_vel
 	
+	# \u00B0 is the unicode the the degree symbol
 	var current_degree = rad_to_deg($vector.target_position.angle())
 	$ui/Label.text = str(snapped(current_degree, .1)) + "\u00B0"
