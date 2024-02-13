@@ -2,6 +2,10 @@ extends Node2D
 
 @onready var mouse_positions_queue : Array = Array()
 @onready var frame_count : int = 0
+@onready var distance_average : float = 0 
+@onready var angle_average : Vector2 = Vector2.ZERO
+@onready var distance_traveled : float = 0.0
+
 
 func _process(_delta) -> void:
 	var mouse_pos = get_global_mouse_position()
@@ -23,17 +27,24 @@ func _process(_delta) -> void:
 	
 	$vector.position = mouse_pos
 	
-	var angle_average : Vector2
-	var distance_average : float
+	# added this variable to shorten the lines
+	var mpq : Array = mouse_positions_queue
+	if frame_count > 1:
+		var current_point = mpq[mpq.size() - 1]
+		var previous_point = mpq[mpq.size() - 2]
+		var dist : Vector2 = current_point - previous_point
+		distance_traveled += sqrt(pow(dist.x, 2) + pow(dist.y, 2))
+	
 	if frame_count > 2:
-		# added this variable to shorten the lines
-		var mpq : Array = mouse_positions_queue
+
+
 		for i in  mouse_positions_queue.size() - 2:
 			angle_average += mpq[mpq.size() - i - 1] - mpq[mpq.size() - i - 2]
 		angle_average /=  mouse_positions_queue.size() - 2
 		
 		# takes the average of distance using 1/10th of the Queue's recorded points.
-		for i in (int(mouse_positions_queue.size() / 10)) - 2:
+		# integer division
+		for i in (mouse_positions_queue.size() / 10) - 2:
 			distance_average += mpq[mpq.size() - i - 1].distance_to(mpq[mpq.size() - i - 2])
 		distance_average /=  mouse_positions_queue.size() - 2
 		
@@ -51,3 +62,5 @@ func _process(_delta) -> void:
 	# \u00B0 is the unicode the the degree symbol
 	var current_degree = rad_to_deg($vector.target_position.angle())
 	$ui/Label.text = str(snapped(current_degree, .1)) + "\u00B0"
+	
+	$ui/Label2.text = str("%d px") % distance_traveled

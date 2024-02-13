@@ -38,3 +38,10 @@ offset_left = 92.0
 offset_top = 321.0
 offset_right = 132.0
 offset_bottom = 344.0
+
+[node name="Label2" type="Label" parent="ui"]
+layout_mode = 0
+offset_left = 88.0
+offset_top = 542.0
+offset_right = 128.0
+offset_bottom = 565.0
