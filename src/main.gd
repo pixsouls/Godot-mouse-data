@@ -2,6 +2,12 @@ extends Node2D
 
 @onready var mouse_positions_queue : Array = Array()
 @onready var frame_count : int = 0
+@onready var MAX_POINTS : int = 25
+@onready var bezier_curve_enabled : bool = true
+
+func _ready():
+	pass
+
 
 func _process(_delta) -> void:
 	var mouse_pos = get_global_mouse_position()
@@ -10,16 +16,22 @@ func _process(_delta) -> void:
 	# TODO: just init the array to Vector2.ZERO
 	frame_count += 1
 	
-	# sussy queue.
-	mouse_positions_queue.append(mouse_pos)
-	if mouse_positions_queue.size() >= 100:
-		# sussy pop()
-		mouse_positions_queue.remove_at(0)
+	if frame_count % 2 == 0:
+		# sussy queue.
+		mouse_positions_queue.append(mouse_pos)
+		if mouse_positions_queue.size() >= MAX_POINTS:
+			# sussy pop()
+			mouse_positions_queue.remove_at(0)
 	
 	var packed_array : PackedVector2Array = PackedVector2Array()
 	for i in mouse_positions_queue.size():
 		packed_array.append(mouse_positions_queue[i])
-	$line.points = packed_array
+	$line_actual.points = packed_array
+	
+	if frame_count % 1 == 0 and bezier_curve_enabled:
+		var bezier_line_data = draw_bezier(mouse_positions_queue, 20)
+		$line_bezier.points = bezier_line_data
+	
 	
 	$vector.position = mouse_pos
 	
@@ -51,3 +63,23 @@ func _process(_delta) -> void:
 	# \u00B0 is the unicode the the degree symbol
 	var current_degree = rad_to_deg($vector.target_position.angle())
 	$ui/Label.text = str(snapped(current_degree, .1)) + "\u00B0"
+
+func draw_bezier(inp, resolution) -> Array:
+	
+	# calculate subpoints
+	var out : Array = Array()
+	var t : float = 0.0
+	for i in resolution:
+		t += 1.0 / resolution
+		for j in inp.size() - 1:
+			out.append(de_casteljau(inp, t))
+	return out
+
+func de_casteljau(points, t):
+	if points.size() == 1:
+		return points[0]
+	else:
+		var new_points = []
+		for i in range(len(points) - 1):
+			new_points.append((1 - t) * points[i] + t * points[i + 1])
+		return de_casteljau(new_points, t)

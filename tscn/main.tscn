@@ -6,13 +6,21 @@
 [node name="main" type="Node2D"]
 script = ExtResource("1_sno45")
 
-[node name="line" parent="." instance=ExtResource("2_jerbn")]
+[node name="line_actual" parent="." instance=ExtResource("2_jerbn")]
+width = 2.0
+default_color = Color(0, 0.572549, 0.929412, 1)
+
+[node name="line_bezier" parent="." instance=ExtResource("2_jerbn")]
+width = 2.0
+default_color = Color(0.905882, 0, 0, 1)
 
 [node name="vector" type="RayCast2D" parent="."]
+top_level = true
 position = Vector2(571, 298)
 collide_with_bodies = false
 
 [node name="ui vector" type="RayCast2D" parent="."]
+top_level = true
 position = Vector2(110, 403)
 
 [node name="ui" type="Control" parent="."]

@@ -18,4 +18,4 @@ config/icon="res://icon.svg"
 
 [rendering]
 
-environment/defaults/default_clear_color=Color(0.0470588, 0.129412, 0.254902, 1)
+environment/defaults/default_clear_color=Color(0.054902, 0.054902, 0.0588235, 1)
