@@ -19,6 +19,11 @@ top_level = true
 position = Vector2(571, 298)
 collide_with_bodies = false
 
+[node name="bezier vector" type="RayCast2D" parent="."]
+top_level = true
+position = Vector2(571, 298)
+collide_with_bodies = false
+
 [node name="ui vector" type="RayCast2D" parent="."]
 top_level = true
 position = Vector2(110, 403)
